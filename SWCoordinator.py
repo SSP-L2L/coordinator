@@ -3,7 +3,7 @@ __author__ = 'sonnyhcl'
 """
 Supplier/Wagon Coordinator
 """
-from Constants import *
+from . import *
 
 
 def SWCoordinator(msg):

@@ -3,7 +3,7 @@ __author__ = 'sonnyhcl'
 """
 Vessel/Manager Coordinator
 """
-from Constants import *
+from . import *
 
 def VMCoordinator(msg):
     """

@@ -3,7 +3,8 @@ __author__ = 'sonnyhcl'
 """
 lambda function in aws lambda
 """
-from Constants import *
+from . import *
+
 
 def lambda_handler(event, context):
     msg = {}

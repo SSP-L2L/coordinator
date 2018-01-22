@@ -3,7 +3,7 @@ __author__ = 'sonnyhcl'
 """
 Manager/Supplier Coordinator
 """
-from Constants import *
+from . import *
 
 
 def MSCoordinator(msg):

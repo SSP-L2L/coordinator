@@ -1,10 +1,5 @@
 # -*- coding: UTF-8 -*-
 __author__ = 'sonnyhcl'
-import time
-import json
-import requests
-from .VPort import VPort
-from .WPort import WPort
 
 headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
 activiti_url = "http://10.131.245.91:8084"

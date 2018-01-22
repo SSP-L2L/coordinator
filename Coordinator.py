@@ -4,6 +4,7 @@ __author__ = 'sonnyhcl'
 imitate lambda container
 """
 from flask import Flask, request, jsonify
+
 from lambda_function import lambda_handler
 
 app = Flask(__name__)
