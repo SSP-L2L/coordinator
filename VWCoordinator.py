@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 __author__ = 'sonnyhcl'
+
 """
 Vessel/Wagon Coordinator
 """
@@ -8,7 +9,6 @@ from . import *
 
 def VWCoordinator(msg):
     """
-    >>> import string
     >>> msg = { \
         'msgType' : string, \
         'V_pid'  : string, \

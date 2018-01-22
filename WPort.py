@@ -1,6 +1,10 @@
 # -*- coding: UTF-8 -*-
 __author__ = 'sonnyhcl'
 
+"""
+WPort class
+"""
+
 
 class WPort:
     def __init__(self, w=None):

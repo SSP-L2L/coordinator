@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 __author__ = 'sonnyhcl'
+
 """
 Manager/Supplier Coordinator
 """
@@ -8,6 +9,9 @@ from . import *
 
 def MSCoordinator(msg):
     """
+    >>> msg = { \
+        'msgType' : string, \
+    }
     :param msg: dict
     :return:
     """

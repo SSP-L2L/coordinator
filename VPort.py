@@ -1,9 +1,13 @@
 # -*- coding: UTF-8 -*-
 __author__ = 'sonnyhcl'
 
+"""
+VPort class
+"""
+
 
 class VPort:
-    def __init__(self, v):
+    def __init__(self, v=None):
         self.pname = v.get("pname")
         self.quayRate = v.get("quayRate")
         self.weight = v.get("weight")
