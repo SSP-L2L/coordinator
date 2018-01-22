@@ -4,7 +4,13 @@ __author__ = 'sonnyhcl'
 """
 Manager/Supplier Coordinator
 """
-from . import *
+
+import string
+import time
+
+from .Constants import *
+from .VPort import VPort
+from .WPort import WPort
 
 
 def MSCoordinator(msg):

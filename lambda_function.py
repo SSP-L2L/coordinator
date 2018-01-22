@@ -1,9 +1,10 @@
 # -*- coding: UTF-8 -*-
 __author__ = 'sonnyhcl'
+
 """
 lambda function in aws lambda
 """
-from . import *
+import time
 
 
 def lambda_handler(event, context):

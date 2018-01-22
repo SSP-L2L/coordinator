@@ -4,7 +4,7 @@ __author__ = 'sonnyhcl'
 """
 Supplier/Wagon Coordinator
 """
-from . import *
+import string
 
 
 def SWCoordinator(msg):

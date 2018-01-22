@@ -4,7 +4,15 @@ __author__ = 'sonnyhcl'
 """
 Vessel/Wagon Coordinator
 """
-from . import *
+import json
+import string
+import time
+
+import requests
+
+from .Constants import *
+from .VPort import VPort
+from .WPort import WPort
 
 
 def VWCoordinator(msg):

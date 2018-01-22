@@ -4,7 +4,7 @@ __author__ = 'sonnyhcl'
 """
 Vessel/Manager Coordinator
 """
-from . import *
+import string
 
 
 def VMCoordinator(msg):
