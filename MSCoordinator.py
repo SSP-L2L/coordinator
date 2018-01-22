@@ -22,3 +22,10 @@ def MSCoordinator(msgData):
     for key, value in targetLocationMap.items():
         pass
     pass
+
+
+if __name__ == "__main__":
+    msgData = {}
+    from pprint import pprint
+
+    pprint(MSCoordinator(msgData))
