@@ -15,9 +15,10 @@ def hello_world():
     input:  application/json
     output: application/json
     """
-    req = request.json
-    return jsonify(lambda_handler(req, None))
+    if not request.json:
+        return jsonify({"ErrorMsg": "Only Accept application/json"})
+    return jsonify(lambda_handler(request.json, None))
 
 
 if __name__ == '__main__':
-    app.run(host='localhost', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

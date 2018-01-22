@@ -3,31 +3,44 @@ __author__ = 'sonnyhcl'
 """
 Supplier/Wagon Coordinator
 """
+from Constants import *
 
 
-def SWCoordinator(msgData):
+def SWCoordinator(msg):
     """
-    msgType == "Msg_StartWeagon"
-    :param msgData: dict
+    :param msg: dict
     :return:
     """
-    wagon = {}
-    wagon["wagon_name"] = "weagon_1"
-    wagon["x"] = 113.2982254028
-    wagon["y"] = 23.0958388047
-    wagon["is_arrival"] = False
-    msgData["W_Info"] = wagon
-    msgData["msgType"] = "#"
-    msgData["M_pid"] = "#"
+    msgType = msg.get("msgType")
+    if msgType == "Msg_StartWeagon":
+        wagon = Wagon()
+        wagon.W_name = "weagon_lambda"
+        wagon.X_Coor = 113.2982254028
+        wagon.Y_Coor = 23.0958388047
+        wagon.isArrival = False
 
-    # ???
-    # runtimeService.startProcessInstanceByMessage("Msg_StartWeagon", msgData);
+        msg["W_Info"] = wagon.__dict__
+        msg.pop("msgType", None)
+        msg.pop("M_pid", None)
 
-    pass
+        # TODO
+        # print(msg)
+        # runtimeService.startProcessInstanceByMessage("Msg_StartWeagon", msg);
+        print("Weagon流程实例已启动")
 
 
-if __name__ == "__main__":
-    msgData = {}
-    from pprint import pprint
-
-    pprint(SWCoordinator(msgData))
+class Wagon:
+    def __init__(self):
+        self.pid = None
+        self.W_id = None
+        self.W_Name = None
+        self.X_Coor = None
+        self.Y_Coor = None
+        self.W_Velocity = None
+        self.Start = None
+        self.End = None
+        self.V_ETime = None
+        self.pArri = None
+        self.needPlan = None
+        self.planRes = None
+        self.isArrival = None

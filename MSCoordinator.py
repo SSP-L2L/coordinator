@@ -3,29 +3,56 @@ __author__ = 'sonnyhcl'
 """
 Manager/Supplier Coordinator
 """
+from Constants import *
 
 
-def MSCoordinator(msgData):
+def MSCoordinator(msg):
     """
-    msgType == "Msg_StartSupplier"
-    :param msgData: dict
+    :param msg: dict
     :return:
     """
-    # 筛选港口
-    w_threshold = msgData.get("SparePartWeight")
-    targetLocationMap = msgData.get("V_TargLocList")
+    msgType = msg.get("msgType")
+    if msgType == "Msg_StartSupplier":
+        w_threshold = (float)(msg.get("SparePartWeight"))
+        targLocMap = msg.get("V_TargLocList")
+        targLocList = [VPort(v) for v in targLocMap]
 
-    # map to list ???
-    # targetLocationList =
+        candidateVPorts = []
+        for i, now in enumerate(targLocList):
+            if now.weight >= w_threshold:
+                now.isMeetWeightCond = True
+            else:
+                now.isMeetWeightCond = False
 
-    candidateVPorts = []
-    for key, value in targetLocationMap.items():
-        pass
-    pass
+            if now.isCraneStart == False:
+                now.isMeetWeightCond = False
 
+            if now.isMeetWeightCond == True:
+                candidateVPorts.append(now)
 
-if __name__ == "__main__":
-    msgData = {}
-    from pprint import pprint
+        # 给VWF发送消息
+        # TODO EventType.MSC_MeetWeightCond
+        vmfevent = {}
+        vmfevent["createAt"] = time.time()
+        vmfevent["MSC_TargPorts"] = targLocList.__dict__
+        # TODO globalEventQueue.sendMsg(e);
+        msg.pop("V_TargLocList", None)
+        print("根据港口起重机启动与否及载重筛选港口完毕！")
 
-    pprint(MSCoordinator(msgData))
+        # 消息启动Supplier流程
+        wtarglocs = []
+        for i, vp in enumerate(candidateVPorts):
+            wp = WPort()
+            vp = (VPort)(vp)
+            wp.pname = vp.pname
+            wp.carryRate = carRateMp[vp.pname]
+            wp.x_coor = vp.x_coor
+            wp.y_coor = vp.y_coor
+            if vp.isMeetWeightCond:
+                wtarglocs.append(wp)
+
+        msg["W_TargLocList"] = wtarglocs.__dict__
+        msg.pop("msgType", None)
+        # TODO
+        # runtimeService.startProcessInstanceByMessage("Msg_StartSupplier", msg);
+        print("Supplier流程实例已启动")
