@@ -16,4 +16,4 @@ class WPort:
         self.supCost = w.get("supCost")
         self.x_coor = w.get("x_coor")
         self.y_coor = w.get("y_coor")
-        self.sortFlag = w.get("softFlag")
+        self.sortFlag = w.get("sortFlag")
