@@ -24,7 +24,7 @@ def hello_world():
 
 
 @app.route('/post', methods=['post'])
-def getpost():
+def get_post():
     """
     测试跟activiti流程进行交互的Msg信号
     :return:

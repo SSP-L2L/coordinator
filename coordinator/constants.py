@@ -2,14 +2,13 @@
 __author__ = 'sonnyhcl'
 
 """
-Constants
+constants
 """
 
-headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
-activiti_url = "http://10.131.245.91:8084"
-zoomInRate = 500  # 时间比例系数
+HEADERS = {'Content-type': 'application/json', 'Accept': 'application/json'}
+ACTIVITI_URL = "http://10.131.245.91:8084"
+ZOOM_IN_RATE = 500  # 时间比例系数
 k = 0.5  # 紧迫性参数
-serialVersionUID = 5334846840309131394
 carRateMp = {
     "黄石" : 0.0021,
     "武穴" : 0.0021,

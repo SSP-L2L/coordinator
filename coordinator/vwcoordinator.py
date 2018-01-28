@@ -10,9 +10,9 @@ import time
 
 import requests
 
-from Coordinator.Constants import *
-from Coordinator.VPort import VPort
-from Coordinator.WPort import WPort
+from coordinator.constants import *
+from coordinator.vport import VPort
+from coordinator.wport import WPort
 
 
 def VWCoordinator(msg):
@@ -46,7 +46,7 @@ def VWCoordinator(msg):
         vStartTime = getVariable(vpid, "StartTime")
         curDate = time.time() * 1000  # ms
         t_ms = vStartTime
-        t_ms += (curDate - vStartTime) * zoomInRate
+        t_ms += (curDate - vStartTime) * ZOOM_IN_RATE
 
         # 获取车的当前位置
         w_info = getVariable(wpid, "W_Info")
@@ -106,21 +106,21 @@ def VWCoordinator(msg):
 
 
 def getVariable(pid, variableName):
-    get_url = activiti_url + "/zbq/variables/{}/{}".format(pid, variableName)
+    get_url = ACTIVITI_URL + "/zbq/variables/{}/{}".format(pid, variableName)
     print(get_url)
 
-    ret = requests.get(get_url, headers=headers).json()
+    ret = requests.get(get_url, headers=HEADERS).json()
     print(ret)
 
     return ret
 
 
 def setVairable(pid, variableName, value):
-    set_url = activiti_url + "/zbq/variables/{}/{}/complete".format(pid, variableName)
+    set_url = ACTIVITI_URL + "/zbq/variables/{}/{}/complete".format(pid, variableName)
     print(set_url)
 
     data = {variableName: value}
-    requests.put(set_url, data=data, headers=headers)
+    requests.put(set_url, data=data, headers=HEADERS)
 
 
 def getVPorts(vpid, vname):
@@ -163,7 +163,7 @@ def planPath(x1, y1, x2, y2):
         .format(x1, y1, x2, y2)
     print(map_url)
 
-    ret = requests.get(map_url, headers=headers).json()
+    ret = requests.get(map_url, headers=HEADERS).json()
     print(ret)
 
     return ret.get("route", None)

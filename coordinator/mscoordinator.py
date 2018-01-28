@@ -8,9 +8,9 @@ Manager/Supplier Coordinator
 import string
 import time
 
-from Coordinator.Constants import *
-from Coordinator.VPort import VPort
-from Coordinator.WPort import WPort
+from coordinator.constants import *
+from coordinator.vport import VPort
+from coordinator.wport import WPort
 
 
 def MSCoordinator(msg):
