@@ -35,14 +35,12 @@ def getpost():
 
     import requests
     import json
-    url = "http://localhost:8080/activiti-app/api/coord/messages/Msg_StartRec"
-
-    headers = {
-        'Content-Type' : "application/json",
-        'Accept'       : "application/json"
-    }
     from requests.auth import HTTPBasicAuth
+
+    url = "http://localhost:8080/activiti-app/api/coord/messages/Msg_StartRec"
+    headers = {'Content-Type': "application/json", 'Accept': "application/json"}
     auth = HTTPBasicAuth("admin", "test")
+
     response = requests.post(url, auth=auth, data=json.dumps(ret), headers=headers)
     print(response)
 
@@ -50,4 +48,4 @@ def getpost():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+        app.run(host='0.0.0.0', port=5000, debug=True)
