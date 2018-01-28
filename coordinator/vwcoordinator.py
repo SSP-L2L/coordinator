@@ -36,20 +36,19 @@ def VWCoordinator(msg):
     if (msgType == "msg_UpdateDest"):
         vTargetLocationList = getVPorts(vpid, "TargLocList")
         wTargetLocationList = getWPorts(wpid, "W_TargLocList")
-        sp_weight = getVariable(wpid, "SparePartWeight")
+        sp_weight = float(getVariable(wpid, "SparePartWeight"))
 
         # 将newTargLocList转为map
-        vpMap = {nowWport.pname: nowWport for nowWport in vTargetLocationList}
+        vpMap = {port.pname: port for port in vTargetLocationList}
 
         # 计算当前时间 ， 以Vessel实例启动时间为基准
         # TODO 时间格式要统一
-        vStartTime = getVariable(vpid, "StartTime")
+        vStartTime = time.mktime(time.strptime(getVariable(vpid, "StartTime"), "%Y-%m-%d %H:%M:%S")) # ms
         curDate = time.time() * 1000  # ms
-        t_ms = vStartTime
-        t_ms += (curDate - vStartTime) * ZOOM_IN_RATE
+        t_ms = vStartTime + (curDate - vStartTime) * ZOOM_IN_RATE
 
         # 获取车的当前位置
-        w_info = getVariable(wpid, "W_Info")
+        w_info = json.loads(getVariable(wpid, "W_Info"))
         w_value = w_info.get("value")
         w_xc = w_value.get("x_Coor")
         w_yc = w_value.get("y_Coor")
@@ -57,28 +56,29 @@ def VWCoordinator(msg):
 
         candinateWports = []
         routeMp = {}
-        for nowWport in wTargetLocationList:
-            nowVport = (VPort)(vpMap.get(nowWport.pname))
-            if nowVport.State == "InAD" or nowVport.State == "AfterAD":
-                route = planPath(w_xc, w_yc, nowVport.x_coor, nowVport.y_coor)
-                estiDate = getEsti_Ms(route) * 1000 + t_ms
+        for wport in wTargetLocationList:
+            vport = (VPort)(vpMap.get(wport.pname))
+            if vport.State == "InAD" or vport.State == "AfterAD":
+                route = planPath(w_xc, w_yc, vport.x_coor, vport.y_coor)
+                estiDate = getEsti_Ms(route) * 1000 + t_ms # TODO 时间格式
                 estiDist = getEsti_dist(route)
-                nowWport.dist = estiDist
-                nowWport.esTime = estiDate
-                if nowVport.EEnd - nowWport.esTime > 0:
-                    totalCost = max(nowVport.EStart - nowWport.esTime, 0) * \
-                                nowVport.quayRate * sp_weight / 60 / 60 / 1000 + \
-                                nowWport.dist * nowWport.carryRate * sp_weight
-                    nowWport.supCost = totalCost
-                    nowWport.sortFlag = nowVport.sortFlag
-                    routeMp[nowWport.pname] = route
-                    candinateWports.append(nowWport)
-        candinateWports.sort(key=lambda port: port.sortFlag)
+                wport.dist = estiDist
+                wport.esTime = estiDate
+                if vport.EEnd - wport.esTime > 0:
+                    totalCost = max(vport.EStart - wport.esTime, 0) * \
+                                vport.quayRate * sp_weight / 60 / 60 / 1000 + \
+                                wport.dist * wport.carryRate * sp_weight
+                    wport.supCost = totalCost
+                    wport.sortFlag = vport.sortFlag
+                    routeMp[wport.pname] = route
+                    candinateWports.append(wport)
 
         import sys
         minCost = sys.maxsize
         destPort = None
         pathResult = None
+
+        candinateWports.sort(key=lambda port: port.sortFlag)
         for i, twp in enumerate(candinateWports):
             co = (1 - pow(k, i + 1)) * twp.supCost
             twp.supCost = co
@@ -90,12 +90,12 @@ def VWCoordinator(msg):
         vmfEvent = {"createdAt": time.time()}
         if destPort:
             setVairable(vpid, "dpName", destPort.pname)
-            setVairable(wpid, "DestPort", destPort)
-            setVairable(wpid, "W_TargPortList", candinateWports)
-            vmfEvent["W_Info"] = w_info
+            setVairable(wpid, "DestPort", json.dumps(destPort)) # 格式
+            setVairable(wpid, "W_TargPortList", json.dumps(candinateWports))
+            vmfEvent["W_Info"] = json.dumps(w_info)
             vmfEvent["wDestPort"] = json.dumps(destPort)
             vmfEvent["vDestPort"] = json.dumps(vpMap[destPort.pname])
-            vmfEvent["pathResult"] = pathResult
+            vmfEvent["pathResult"] = json.dumps(pathResult)
             vmfEvent["V_pid"] = vpid
             vmfEvent["StartTime"] = vStartTime
             vmfEvent["State"] = "success"
@@ -104,8 +104,17 @@ def VWCoordinator(msg):
             vmfEvent["State"] = "fail"
         # TODO globalEventQueue.sendMsg(e);
 
+    if msgType == "msg_CreateVWConn":
+        print("Vessel 和 Weagon 联系建立")
+
 
 def getVariable(pid, variableName):
+    """
+
+    :param pid: string
+    :param variableName: string
+    :return: json.loads
+    """
     get_url = ACTIVITI_URL + "/zbq/variables/{}/{}".format(pid, variableName)
     print(get_url)
 
@@ -116,6 +125,13 @@ def getVariable(pid, variableName):
 
 
 def setVairable(pid, variableName, value):
+    """
+
+    :param pid: string
+    :param variableName: string
+    :param value: json.dumps
+    :return: None
+    """
     set_url = ACTIVITI_URL + "/zbq/variables/{}/{}/complete".format(pid, variableName)
     print(set_url)
 
@@ -124,26 +140,37 @@ def setVairable(pid, variableName, value):
 
 
 def getVPorts(vpid, vname):
-    ret = getVariable(vpid, vname)
+    """
 
-    vPortList = json.loads(ret.get('vname', {"status": "wrong Vports"}))
+    :param vpid: string
+    :param vname: string
+    :return: [VPorts]
+    """
+    ret = json.loads(getVariable(vpid, vname))
+    vPortList = ret.get('vname', {"status": "wrong Vports"})
     print(vPortList)
 
-    V_Ports = [VPort(v) for v in vPortList]
-    print(V_Ports)
+    vports = [VPort(v) for v in vPortList]
+    print(vports)
 
-    return V_Ports
+    return vports
 
 
 def getWPorts(wpid, vname):
-    ret = getVariable(wpid, vname)
-    wPortList = json.loads(ret.get('vname', {"status": "wrong Wports"}))
+    """
+
+    :param wpid: string
+    :param vname: string
+    :return: [WPorts]
+    """
+    ret = json.loads(getVariable(wpid, vname))
+    wPortList = ret.get('vname', {"status": "wrong Wports"})
     print(wPortList)
 
-    W_Ports = [WPort(w) for w in wPortList]
-    print(W_Ports)
+    wports = [WPort(w) for w in wPortList]
+    print(wports)
 
-    return W_Ports
+    return wports
 
 
 def getEsti_Ms(route):
@@ -159,8 +186,7 @@ def getEsti_dist(route):
 
 
 def planPath(x1, y1, x2, y2):
-    map_url = "http://restapi.amap.com/v3/direction/driving?origin={},{}&destination={},{}&output=json&key=ec15fc50687bd2782d7e45de6d08a023" \
-        .format(x1, y1, x2, y2)
+    map_url = "http://restapi.amap.com/v3/direction/driving?origin={},{}&destination={},{}&output=json&key=ec15fc50687bd2782d7e45de6d08a023".format(x1, y1, x2, y2)
     print(map_url)
 
     ret = requests.get(map_url, headers=HEADERS).json()
