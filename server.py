@@ -20,6 +20,8 @@ def hello_world():
     print(request.json)
     if not request.json:
         return jsonify({"ErrorMsg": "Only Accept application/json"})
+
+    print(jsonify(lambda_handler(request.json, None)))
     return jsonify(lambda_handler(request.json, None))
 
 

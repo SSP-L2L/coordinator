@@ -5,8 +5,8 @@ __author__ = 'sonnyhcl'
 constants
 """
 
-HEADERS = {'Content-type': 'application/json', 'Accept': 'application/json'}
-ACTIVITI_URL = "http://10.131.245.91:8084"
+HEADERS = {'Content-type': 'application/json; charset=UTF-8', 'Accept': 'application/json'}
+ACTIVITI_URL = "http://localhost:8080/activiti-app/api"
 ZOOM_IN_RATE = 500  # 时间比例系数
 k = 0.5  # 紧迫性参数
 carRateMp = {
