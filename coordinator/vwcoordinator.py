@@ -9,6 +9,7 @@ import string
 import time
 
 import requests
+from requests.auth import HTTPBasicAuth
 
 from coordinator.constants import *
 from coordinator.vport import VPort
@@ -33,17 +34,19 @@ def VWCoordinator(msg):
 
     setVairable(vpid, "wpid", wpid)
 
+    print(get_current_function_name())
+
     if (msgType == "msg_UpdateDest"):
+        sp_weight = float(getVariable(wpid, "SparePartWeight"))
         vTargetLocationList = getVPorts(vpid, "TargLocList")
         wTargetLocationList = getWPorts(wpid, "W_TargLocList")
-        sp_weight = float(getVariable(wpid, "SparePartWeight"))
 
         # 将newTargLocList转为map
         vpMap = {port.pname: port for port in vTargetLocationList}
 
         # 计算当前时间 ， 以Vessel实例启动时间为基准
         # TODO 时间格式要统一
-        vStartTime = time.mktime(time.strptime(getVariable(vpid, "StartTime"), "%Y-%m-%d %H:%M:%S")) # ms
+        vStartTime = time.mktime(time.strptime(getVariable(vpid, "StartTime"), "%Y-%m-%d %H:%M:%S"))  # ms
         curDate = time.time() * 1000  # ms
         t_ms = vStartTime + (curDate - vStartTime) * ZOOM_IN_RATE
 
@@ -60,7 +63,7 @@ def VWCoordinator(msg):
             vport = (VPort)(vpMap.get(wport.pname))
             if vport.State == "InAD" or vport.State == "AfterAD":
                 route = planPath(w_xc, w_yc, vport.x_coor, vport.y_coor)
-                estiDate = getEsti_Ms(route) * 1000 + t_ms # TODO 时间格式
+                estiDate = getEsti_Ms(route) * 1000 + t_ms  # TODO 时间格式
                 estiDist = getEsti_dist(route)
                 wport.dist = estiDist
                 wport.esTime = estiDate
@@ -78,7 +81,9 @@ def VWCoordinator(msg):
         destPort = None
         pathResult = None
 
+        print(candinateWports)
         candinateWports.sort(key=lambda port: port.sortFlag)
+        print(candinateWports)
         for i, twp in enumerate(candinateWports):
             co = (1 - pow(k, i + 1)) * twp.supCost
             twp.supCost = co
@@ -90,7 +95,7 @@ def VWCoordinator(msg):
         vmfEvent = {"createdAt": time.time()}
         if destPort:
             setVairable(vpid, "dpName", destPort.pname)
-            setVairable(wpid, "DestPort", json.dumps(destPort)) # 格式
+            setVairable(wpid, "DestPort", json.dumps(destPort))  # 格式
             setVairable(wpid, "W_TargPortList", json.dumps(candinateWports))
             vmfEvent["W_Info"] = json.dumps(w_info)
             vmfEvent["wDestPort"] = json.dumps(destPort)
@@ -103,6 +108,7 @@ def VWCoordinator(msg):
         else:
             vmfEvent["State"] = "fail"
         # TODO globalEventQueue.sendMsg(e);
+        print("看起来跑完了这里")
 
     if msgType == "msg_CreateVWConn":
         print("Vessel 和 Weagon 联系建立")
@@ -118,7 +124,8 @@ def getVariable(pid, variableName):
     get_url = ACTIVITI_URL + "/zbq/variables/{}/{}".format(pid, variableName)
     print(get_url)
 
-    ret = requests.get(get_url, headers=HEADERS).json()
+    auth = HTTPBasicAuth("admin", "test")
+    ret = requests.get(get_url, auth=auth, headers=HEADERS).json()
     print(ret)
 
     return ret
@@ -136,7 +143,8 @@ def setVairable(pid, variableName, value):
     print(set_url)
 
     data = {variableName: value}
-    requests.put(set_url, data=data, headers=HEADERS)
+    auth = HTTPBasicAuth("admin", "test")
+    requests.put(set_url, auth=auth, data=data, headers=HEADERS)
 
 
 def getVPorts(vpid, vname):
@@ -146,8 +154,9 @@ def getVPorts(vpid, vname):
     :param vname: string
     :return: [VPorts]
     """
-    ret = json.loads(getVariable(vpid, vname))
-    vPortList = ret.get('vname', {"status": "wrong Vports"})
+    print(get_current_function_name())
+    ret = getVariable(vpid, vname)
+    vPortList = ret.get('value', {"status": "wrong Vports"})
     print(vPortList)
 
     vports = [VPort(v) for v in vPortList]
@@ -163,8 +172,8 @@ def getWPorts(wpid, vname):
     :param vname: string
     :return: [WPorts]
     """
-    ret = json.loads(getVariable(wpid, vname))
-    wPortList = ret.get('vname', {"status": "wrong Wports"})
+    ret = getVariable(wpid, vname)
+    wPortList = ret.get('value', {"status": "wrong Wports"})
     print(wPortList)
 
     wports = [WPort(w) for w in wPortList]

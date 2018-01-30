@@ -4,6 +4,12 @@ __author__ = 'sonnyhcl'
 """
 constants
 """
+import inspect
+
+
+def get_current_function_name():
+    return inspect.stack()[1][3]
+
 
 HEADERS = {'Content-type': 'application/json; charset=UTF-8', 'Accept': 'application/json'}
 ACTIVITI_URL = "http://localhost:8080/activiti-app/api"

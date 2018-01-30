@@ -6,6 +6,10 @@ Supplier/Wagon Coordinator
 """
 import string
 
+from requests.auth import HTTPBasicAuth
+
+from coordinator.constants import *
+
 
 def SWCoordinator(msg):
     """
@@ -31,6 +35,9 @@ def SWCoordinator(msg):
         # print(msg)
         # runtimeService.startProcessInstanceByMessage("Msg_StartWeagon", msg);
         print("Weagon流程实例已启动")
+
+    url = ACTIVITI_URL + "/coord/runtime/{}".format(msgType)
+    auth = HTTPBasicAuth("admin", "test")
 
 
 class Wagon:
