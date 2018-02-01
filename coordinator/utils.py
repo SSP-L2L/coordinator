@@ -23,12 +23,13 @@ carRateMp = {
 W_START = 0
 W_UPDATE = 1
 W_ARRIVAL = 2
-V_STARTW_PLAN = 3
-W_RUN = 4
-W_Coord = 5
-MSC_MeetWeightCond = 6
-V_AnchorStart = 7
-V_Dock = 8
+V_START=3
+W_PLAN = 4
+W_RUN = 5
+W_Coord = 6
+MSC_MeetWeightCond = 7
+V_AnchorStart = 8
+V_Dock = 9
 
 
 def getVariable(pid, variableName):
