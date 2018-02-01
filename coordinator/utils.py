@@ -12,7 +12,7 @@ HEADERS = {'Content-type': 'application/json; charset=UTF-8', 'Accept': 'applica
 ACTIVITI_URL = "http://localhost:8080/activiti-app/api"
 
 ZOOM_IN_RATE = 500  # 时间比例系数
-k = 0.5  # 紧迫性参数
+K = 0.5  # 紧迫性参数
 
 carRateMp = {
     "黄石" : 0.0021, "武穴": 0.0021, "九江": 0.0021, "安庆": 0.0021, "池州": 0.0021, "铜陵": 0.0021, "芜湖": 0.0021,
@@ -50,18 +50,19 @@ def getVariable(pid, variableName):
 
 def setVariable(pid, variableName, variableType, variableValue):
     """
+    set variable in both globalCache and runtimeService
     :param pid: string
     :param variableName: string
     :param variableType: string
-    :param variableValue: json.dumps
+    :param variableValue: variableType
     :return:
     """
     set_url = ACTIVITI_URL + "/zbq/variables/{}/{}/complete".format(pid, variableName)
     print(set_url)
 
-    data = {'name': variableName, 'type': variableType, 'value': variableValue, 'scope': 'local'}
+    data = json.dumps({'name': variableName, 'type': variableType, 'value': variableValue, 'scope': 'local'})
     auth = HTTPBasicAuth("admin", "test")
-    print(requests.put(set_url, auth=auth, data=json.dumps(data), headers=HEADERS))
+    print(requests.put(set_url, auth=auth, data=data, headers=HEADERS))
 
 
 def sendEvent(vmfvent):
@@ -74,7 +75,7 @@ def sendEvent(vmfvent):
     print(url)
 
     auth = HTTPBasicAuth("admin", "test")
-    print(requests.post(url, auth=auth, data=json.dumps(vmfvent), headers=HEADERS))
+    print(requests.post(url, auth=auth, data=vmfvent, headers=HEADERS))
 
 
 def sendMessage(msgName, data):
@@ -88,7 +89,7 @@ def sendMessage(msgName, data):
     print(url)
 
     auth = HTTPBasicAuth("admin", "test")
-    print(requests.post(url, auth=auth, data=json.dumps(data), headers=HEADERS))
+    print(requests.post(url, auth=auth, data=data, headers=HEADERS))
 
 
 def sendMessageToStartProcessInstance(msgName, data):
@@ -102,5 +103,4 @@ def sendMessageToStartProcessInstance(msgName, data):
     print(url)
 
     auth = HTTPBasicAuth("admin", "test")
-    data.pop("msgType", None)
-    print(requests.post(url, auth=auth, data=json.dumps(data), headers=HEADERS))
+    print(requests.post(url, auth=auth, data=data, headers=HEADERS))

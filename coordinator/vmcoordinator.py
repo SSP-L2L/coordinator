@@ -11,7 +11,7 @@ import time
 import requests
 from requests.auth import HTTPBasicAuth
 
-from coordinator.constants import *
+from coordinator.utils import *
 
 
 def VMCoordinator(msg):
@@ -23,4 +23,5 @@ def VMCoordinator(msg):
     if msgType == "Msg_StartMana":
         print(time.asctime())
         print("sending data to Manager")
-        sendMessageToStartProcessInstance(msgType, msg)
+        msg.pop("msgType", None)
+        sendMessageToStartProcessInstance(msgType, json.dumps(msg))

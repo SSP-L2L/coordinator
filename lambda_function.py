@@ -21,7 +21,7 @@ def lambda_handler(event, context):
         VWCoordinator(event)
     elif msgType == "Msg_StartWeagon":
         SWCoordinator(event)
-    elif msgType == "Msg_StartSupplier" or msgType == "Msg_StartMSC":
+    elif msgType == "Msg_StartSupplier":
         MSCoordinator(event)
 
     msg = {}

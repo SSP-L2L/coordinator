@@ -10,7 +10,7 @@ import time
 
 import requests
 
-from coordinator.constants import *
+from coordinator.utils import *
 from coordinator.vport import VPort
 from coordinator.wport import WPort
 
@@ -76,7 +76,7 @@ def VWCoordinator(msg):
         candinateWports.sort(key=lambda port: port.sortFlag)
         print(candinateWports)
         for i, twp in enumerate(candinateWports):
-            co = (1 - pow(k, i + 1)) * twp.supCost
+            co = (1 - pow(K, i + 1)) * twp.supCost
             twp.supCost = co
             if co < minCost:
                 minCost = co

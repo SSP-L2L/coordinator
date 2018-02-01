@@ -11,7 +11,7 @@ import json
 import requests
 from requests.auth import HTTPBasicAuth
 
-from coordinator.constants import *
+from coordinator.utils import *
 from coordinator.vport import VPort
 from coordinator.wport import WPort
 
@@ -22,12 +22,8 @@ def MSCoordinator(msg):
     :return:
     """
     msgType = msg.get("msgType")
-    if msgType == "Msg_StartMSC":
-        print(time.asctime())
-        print("sending data to StartMSC")
-        sendMessageToStartProcessInstance(msgType, msg)
-
     if msgType == "Msg_StartSupplier":
+        vpid = msg.get("V_pid")
         w_thre = msg.get("SparePartWeight")
         targLocMap = msg.get("V_TargLocList")
         targLocList = [VPort(v) for v in targLocMap]
@@ -46,7 +42,6 @@ def MSCoordinator(msg):
             if now.isMeetWeightCond == True:
                 candidateVPorts.append(now)
                 lastId = i
-        vpid = msg.get("V_pid")
         print("last valid port={}\nvpid={}".format(lastId, vpid))
         setVariable(vpid, "lastValidId", 'integer', lastId)
 
@@ -74,5 +69,5 @@ def MSCoordinator(msg):
         msg["W_TargLocList"] = [i.__dict__ for i in wtarglocs]
         msg.pop("msgType", None)
 
-        sendMessage("Msg_StartSupplier", json.dumps(msg))
+        sendMessageToStartProcessInstance("Msg_StartSupplier", json.dumps(msg))
         print("Supplier流程实例已启动")

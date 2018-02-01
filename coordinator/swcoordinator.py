@@ -8,7 +8,7 @@ import string
 
 from requests.auth import HTTPBasicAuth
 
-from coordinator.constants import *
+from coordinator.utils import *
 
 
 def SWCoordinator(msg):
