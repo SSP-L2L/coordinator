@@ -48,8 +48,8 @@ def MSCoordinator(msg):
         # SendMsg to VWF
         vmfevent = {'data': {}}
         vmfevent['type'] = MSC_MeetWeightCond
-        vmfevent['data']['createAt'] = time.time()
-        vmfevent['data']["MSC_TargPorts"] = [i.__dict__ for i in targLocList]
+        vmfevent['createAt'] = time.time()
+        vmfevent["MSC_TargPorts"] = [i.__dict__ for i in targLocList]
         sendEvent(json.dumps(vmfevent))
 
         msg.pop("V_TargLocList", None)

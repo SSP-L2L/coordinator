@@ -33,9 +33,6 @@ def SWCoordinator(msg):
         # runtimeService.startProcessInstanceByMessage("Msg_StartWeagon", msg);
         print("Weagon流程实例已启动")
 
-    url = ACTIVITI_URL + "/coord/runtime/{}".format(msgType)
-    auth = HTTPBasicAuth("admin", "test")
-
 
 class Wagon:
     def __init__(self):
