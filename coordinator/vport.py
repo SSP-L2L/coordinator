@@ -7,7 +7,7 @@ VPort class
 
 
 class VPort:
-    def __init__(self, v=None):
+    def __init__(self, v={}):
         self.pname = v.get("pname")
         self.quayRate = v.get("quayRate")
         self.weight = v.get("weight")

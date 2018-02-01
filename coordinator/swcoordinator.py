@@ -13,9 +13,6 @@ from coordinator.constants import *
 
 def SWCoordinator(msg):
     """
-    >>> msg = { \
-        'msgType' : string, \
-    }
     :param msg: dict
     :return:
     """

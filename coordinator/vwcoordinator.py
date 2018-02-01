@@ -9,7 +9,6 @@ import string
 import time
 
 import requests
-from requests.auth import HTTPBasicAuth
 
 from coordinator.constants import *
 from coordinator.vport import VPort
@@ -18,12 +17,6 @@ from coordinator.wport import WPort
 
 def VWCoordinator(msg):
     """
-    >>> msg = { \
-        'msgType' : string, \
-        'V_pid'  : string, \
-        'W_pid' : string, \
-        'reason' : string \
-    }
     :param msg:
     :return:
     """
@@ -32,9 +25,7 @@ def VWCoordinator(msg):
     wpid = msg.get('W_pid')
     reason = msg.get('reason')
 
-    setVairable(vpid, "wpid", wpid)
-
-    print(get_current_function_name())
+    setVariable(vpid, "wpid", 'integer', wpid)
 
     if (msgType == "msg_UpdateDest"):
         sp_weight = float(getVariable(wpid, "SparePartWeight"))
@@ -94,9 +85,9 @@ def VWCoordinator(msg):
 
         vmfEvent = {"createdAt": time.time()}
         if destPort:
-            setVairable(vpid, "dpName", destPort.pname)
-            setVairable(wpid, "DestPort", json.dumps(destPort))  # 格式
-            setVairable(wpid, "W_TargPortList", json.dumps(candinateWports))
+            setVariable(vpid, "dpName", 'string', destPort.pname)
+            setVariable(wpid, "DestPort", 'WPort', json.dumps(destPort))  # 格式
+            setVariable(wpid, "W_TargPortList", 'WPort', json.dumps(candinateWports))
             vmfEvent["W_Info"] = json.dumps(w_info)
             vmfEvent["wDestPort"] = json.dumps(destPort)
             vmfEvent["vDestPort"] = json.dumps(vpMap[destPort.pname])
@@ -114,39 +105,6 @@ def VWCoordinator(msg):
         print("Vessel 和 Weagon 联系建立")
 
 
-def getVariable(pid, variableName):
-    """
-
-    :param pid: string
-    :param variableName: string
-    :return: json.loads
-    """
-    get_url = ACTIVITI_URL + "/zbq/variables/{}/{}".format(pid, variableName)
-    print(get_url)
-
-    auth = HTTPBasicAuth("admin", "test")
-    ret = requests.get(get_url, auth=auth, headers=HEADERS).json()
-    print(ret)
-
-    return ret
-
-
-def setVairable(pid, variableName, value):
-    """
-
-    :param pid: string
-    :param variableName: string
-    :param value: json.dumps
-    :return: None
-    """
-    set_url = ACTIVITI_URL + "/zbq/variables/{}/{}/complete".format(pid, variableName)
-    print(set_url)
-
-    data = {variableName: value}
-    auth = HTTPBasicAuth("admin", "test")
-    requests.put(set_url, auth=auth, data=data, headers=HEADERS)
-
-
 def getVPorts(vpid, vname):
     """
 
@@ -154,7 +112,6 @@ def getVPorts(vpid, vname):
     :param vname: string
     :return: [VPorts]
     """
-    print(get_current_function_name())
     ret = getVariable(vpid, vname)
     vPortList = ret.get('value', {"status": "wrong Vports"})
     print(vPortList)
@@ -195,7 +152,8 @@ def getEsti_dist(route):
 
 
 def planPath(x1, y1, x2, y2):
-    map_url = "http://restapi.amap.com/v3/direction/driving?origin={},{}&destination={},{}&output=json&key=ec15fc50687bd2782d7e45de6d08a023".format(x1, y1, x2, y2)
+    map_url = "http://restapi.amap.com/v3/direction/driving?origin={},{}&destination={},{}&output=json&key=ec15fc50687bd2782d7e45de6d08a023".format(
+        x1, y1, x2, y2)
     print(map_url)
 
     ret = requests.get(map_url, headers=HEADERS).json()

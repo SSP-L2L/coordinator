@@ -7,7 +7,7 @@ WPort class
 
 
 class WPort:
-    def __init__(self, w=None):
+    def __init__(self, w={}):
         self.wpid = w.get("wpid")
         self.pname = w.get("pname")
         self.carryRate = w.get("carryRate")
