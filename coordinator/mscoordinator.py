@@ -1,11 +1,11 @@
 # -*- coding: UTF-8 -*-
-import time
 
 __author__ = 'sonnyhcl'
 
 """
 Manager/Supplier Coordinator
 """
+import time
 import string
 import json
 import requests

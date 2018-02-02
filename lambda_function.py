@@ -25,6 +25,6 @@ def lambda_handler(event, context):
         MSCoordinator(event)
 
     msg = {}
-    msg['sendfrom'] = 'lambda'
+    msg['send_from'] = 'lambda'
     msg['timestamp'] = time.asctime()
     return msg
