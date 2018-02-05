@@ -23,13 +23,13 @@ def VWCoordinator(msg):
     vpid = msg.get('V_pid')
     wpid = msg.get('W_pid')
     reason = msg.get('reason')
-    sp_weight = msg.get("SparePartWeight")
 
     setVariable(vpid, "W_pid", 'integer', int(wpid))
 
     if (msgType == "msg_UpdateDest"):
         vTargetLocationList = getVPorts(vpid, "TargLocList")
         wTargetLocationList = getWPorts(wpid, "W_TargLocList")
+        sp_weight = getVariable(wpid, "SparePartWeight").get("value")
 
         # 将newTargLocList转为map
         vpMap = {port.pname: port for port in vTargetLocationList}
@@ -44,9 +44,10 @@ def VWCoordinator(msg):
         print("t_ms", t_ms, ms2datestr(t_ms))
 
         # 获取车的当前位置
-        w_info = getVariable(wpid, "W_Info").get("value")
-        w_xc = w_info.get("x_Coor")
-        w_yc = w_info.get("y_Coor")
+        w_info = getVariable(wpid, "W_Info")
+        w_value = w_info.get("value")
+        w_xc = w_value.get("x_Coor")
+        w_yc = w_value.get("y_Coor")
         print("车当前位置:{}, {}".format(w_xc, w_yc))
 
         candinateWports = []
