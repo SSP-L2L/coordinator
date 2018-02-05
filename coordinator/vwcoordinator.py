@@ -107,7 +107,7 @@ def VWCoordinator(msg):
         print("看起来VWC没啥毛病")
 
     if msgType == "msg_CreateVWConn":
-        print("Vessel 和 Weagon 联系建立")
+        print("Vessel 和 Wagon 联系建立")
 
 
 def ms2datestr(ms):
@@ -126,6 +126,7 @@ def getVPorts(vpid, vname):
     :return: [VPorts]
     """
     ret = getVariable(vpid, vname)
+
     vPortList = ret.get('value')
     print(vPortList)
 
@@ -143,6 +144,7 @@ def getWPorts(wpid, vname):
     :return: [WPorts]
     """
     ret = getVariable(wpid, vname)
+
     wPortList = ret.get('value')
     print(wPortList)
 
@@ -155,12 +157,14 @@ def getWPorts(wpid, vname):
 def getEsti_Ms(route):
     paths = route.get("paths")
     path = paths[0]
+
     return int(path.get("duration"))
 
 
 def getEsti_dist(route):
     paths = route.get("paths")
     path = paths[0] if len(paths) else {"error"}
+
     return int(path.get('distance'))
 
 
@@ -170,6 +174,5 @@ def planPath(x1, y1, x2, y2):
     print(map_url)
 
     ret = requests.get(map_url, headers=HEADERS).json()
-    # print(ret)
 
     return ret.get("route", None)

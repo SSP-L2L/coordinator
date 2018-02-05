@@ -47,7 +47,7 @@ def MSCoordinator(msg):
 
         # SendMsg to VWF
         event = {'data': {}}
-        event['type'] = MSC_MeetWeightCond
+        event['type'] = 7 # MSC_MeetWeightCond
         event['createAt'] = time.time()
         event["MSC_TargPorts"] = [i.__dict__ for i in targLocList]
         sendMSCEvent(json.dumps(event))

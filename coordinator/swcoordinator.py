@@ -19,7 +19,7 @@ def SWCoordinator(msg):
     msgType = msg.get("msgType")
     if msgType == "Msg_StartWeagon":
         wagon = Wagon()
-        wagon.W_Name = "weagon_lambda"
+        wagon.W_Name = "wagon_lambda"
         wagon.X_Coor = 113.2982254028
         wagon.Y_Coor = 23.0958388047
         wagon.isArrival = False
@@ -29,7 +29,7 @@ def SWCoordinator(msg):
         msg.pop("M_pid", None)
 
         sendMessageToStartProcessInstance(msgType, json.dumps(msg))
-        print("Weagon流程实例已启动")
+        print("Wagon流程实例已启动")
 
 
 class Wagon:
