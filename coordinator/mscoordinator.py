@@ -46,11 +46,11 @@ def MSCoordinator(msg):
         setVariable(vpid, "lastValidId", 'integer', lastId)
 
         # SendMsg to VWF
-        vmfevent = {'data': {}}
-        vmfevent['type'] = MSC_MeetWeightCond
-        vmfevent['createAt'] = time.time()
-        vmfevent["MSC_TargPorts"] = [i.__dict__ for i in targLocList]
-        sendEvent(json.dumps(vmfevent))
+        event = {'data': {}}
+        event['type'] = MSC_MeetWeightCond
+        event['createAt'] = time.time()
+        event["MSC_TargPorts"] = [i.__dict__ for i in targLocList]
+        sendMSCEvent(json.dumps(event))
 
         msg.pop("V_TargLocList", None)
         print("根据港口起重机启动与否及载重筛选港口完毕！")

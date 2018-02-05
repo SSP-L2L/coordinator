@@ -17,7 +17,7 @@ def hello_world():
     input:  application/json
     output: application/json
     """
-    print("enter / request.json=", request.json)
+    print("lambda request.json=", request.json)
     if not request.json:
         return jsonify({"ErrorMsg": "Only Accept application/json"})
 

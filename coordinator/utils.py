@@ -9,6 +9,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 HEADERS = {'Content-type': 'application/json; charset=UTF-8', 'Accept': 'application/json'}
+AUTH = HTTPBasicAuth("admin", "test")
 ACTIVITI_URL = "http://localhost:8080/activiti-app/api"
 
 ZOOM_IN_RATE = 500  # 时间比例系数
@@ -23,7 +24,7 @@ carRateMp = {
 W_START = 0
 W_UPDATE = 1
 W_ARRIVAL = 2
-V_START=3
+V_START = 3
 W_PLAN = 4
 W_RUN = 5
 W_Coord = 6
@@ -42,9 +43,9 @@ def getVariable(pid, variableName):
     get_url = ACTIVITI_URL + "/zbq/variables/{}/{}".format(pid, variableName)
     print(get_url)
 
-    auth = HTTPBasicAuth("admin", "test")
-    ret = requests.get(get_url, auth=auth, headers=HEADERS).json()
+    ret = requests.get(get_url, auth=AUTH, headers=HEADERS).json()
     print(ret)
+    print(get_url, " DONE")
 
     return ret
 
@@ -62,21 +63,57 @@ def setVariable(pid, variableName, variableType, variableValue):
     print(set_url)
 
     data = json.dumps({'name': variableName, 'type': variableType, 'value': variableValue, 'scope': 'local'})
-    auth = HTTPBasicAuth("admin", "test")
-    print(requests.put(set_url, auth=auth, data=data, headers=HEADERS))
+    print(data)
+
+    resp = requests.put(set_url, auth=AUTH, data=data, headers=HEADERS)
+    print(resp.url, resp.status_code, resp.text)
 
 
-def sendEvent(vmfvent):
+def setCache(pid, variableName, variableType, variableValue):
+    """
+    set variable in both globalCache and runtimeService
+    :param pid: string
+    :param variableName: string
+    :param variableType: string
+    :param variableValue: variableType
+    :return:
+    """
+    set_url = ACTIVITI_URL + "/zbq/variables/{}/{}".format(pid, variableName)
+    print(set_url)
+
+    data = json.dumps({'name': variableName, 'type': variableType, 'value': variableValue, 'scope': 'local'})
+    print(data)
+
+    resp = requests.put(set_url, auth=AUTH, data=data, headers=HEADERS)
+    print(resp.url, resp.status_code, resp.text)
+
+
+def sendMSCEvent(event):
+    """
+
+    :param event: json.dumps
+    :return:
+    """
+    url = ACTIVITI_URL + "/coord/msc_event"
+    print(url)
+    print(event)
+
+    resp = requests.post(url, auth=AUTH, data=event, headers=HEADERS)
+    print(resp.url, resp.status_code, resp.text)
+
+
+def sendVWCEvent(event):
     """
 
     :param vmfvent: json.dumps
     :return:
     """
-    url = ACTIVITI_URL + "/coord/event"
+    url = ACTIVITI_URL + "/coord/vwc_event"
     print(url)
+    print(event)
 
-    auth = HTTPBasicAuth("admin", "test")
-    print(requests.post(url, auth=auth, data=vmfvent, headers=HEADERS))
+    resp = requests.post(url, auth=AUTH, data=event, headers=HEADERS)
+    print(resp.url, resp.status_code, resp.text)
 
 
 def sendMessage(msgName, data):
@@ -88,9 +125,10 @@ def sendMessage(msgName, data):
     """
     url = ACTIVITI_URL + "/coord/messages/{}".format(msgName)
     print(url)
+    print(data)
 
-    auth = HTTPBasicAuth("admin", "test")
-    print(requests.post(url, auth=auth, data=data, headers=HEADERS))
+    resp = requests.post(url, auth=AUTH, data=data, headers=HEADERS)
+    print(resp.url, resp.status_code, resp.text)
 
 
 def sendMessageToStartProcessInstance(msgName, data):
@@ -102,6 +140,7 @@ def sendMessageToStartProcessInstance(msgName, data):
     """
     url = ACTIVITI_URL + "/coord/runtime/{}".format(msgName)
     print(url)
+    print(data)
 
-    auth = HTTPBasicAuth("admin", "test")
-    print(requests.post(url, auth=auth, data=data, headers=HEADERS))
+    resp = requests.post(url, auth=AUTH, data=data, headers=HEADERS)
+    print(resp.url, resp.status_code, resp.text)

@@ -21,7 +21,5 @@ def VMCoordinator(msg):
     """
     msgType = msg.get("msgType")
     if msgType == "Msg_StartMana":
-        print(time.asctime())
-        print("sending data to Manager")
         msg.pop("msgType", None)
         sendMessageToStartProcessInstance(msgType, json.dumps(msg))

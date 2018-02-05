@@ -14,7 +14,7 @@ from coordinator.swcoordinator import SWCoordinator
 def lambda_handler(event, context):
     # dispatcher
     msgType = event.get("msgType", "肯定是哪里又落了msgType")
-    print("msgType=", msgType)
+    print("msgType", msgType)
     if msgType == "Msg_StartMana":
         VMCoordinator(event)
     elif msgType == "msg_UpdateDest" or msgType == "msg_CreateVWConn":

@@ -23,7 +23,7 @@ def VWCoordinator(msg):
     vpid = msg.get('V_pid')
     wpid = msg.get('W_pid')
     reason = msg.get('reason')
-    sp_weight = float(msg.get("SparePartWeight"))
+    sp_weight = msg.get("SparePartWeight")
 
     setVariable(vpid, "W_pid", 'integer', int(wpid))
 
@@ -36,18 +36,17 @@ def VWCoordinator(msg):
 
         # 计算当前时间 ， 以Vessel实例启动时间为基准
         startTime = getVariable(vpid, "StartTime")
-        vStartTime =  datestr2ms(startTime.get('value'))
-        print("vStartTime", vStartTime)
+        vStartTime = datestr2ms(startTime.get('value'))
+        print("vStartTime", vStartTime, ms2datestr(vStartTime))
         curDate = time.time() * 1000  # ms
-        print("curDate", curDate)
+        print("curDate", curDate, ms2datestr(curDate))
         t_ms = vStartTime + (curDate - vStartTime) * ZOOM_IN_RATE
-        print("t_ms", t_ms)
+        print("t_ms", t_ms, ms2datestr(t_ms))
 
         # 获取车的当前位置
-        w_info = getVariable(wpid, "W_Info")
-        w_value = w_info.get("value")
-        w_xc = w_value.get("x_Coor")
-        w_yc = w_value.get("y_Coor")
+        w_info = getVariable(wpid, "W_Info").get("value")
+        w_xc = w_info.get("x_Coor")
+        w_yc = w_info.get("y_Coor")
         print("车当前位置:{}, {}".format(w_xc, w_yc))
 
         candinateWports = []
@@ -85,25 +84,26 @@ def VWCoordinator(msg):
         print("pathResult", pathResult)
         print("destPort", destPort)
 
-        vmfEvent = {}
+        event = {}
         if destPort:
             setVariable(vpid, "dpName", 'string', destPort.pname)
-            setVariable(wpid, "DestPort", 'WPort', json.dumps(destPort))
-            setVariable(wpid, "W_TargPortList", 'WPort', json.dumps(candinateWports))
-            vmfEvent["W_Info"] = json.dumps(w_info)
-            vmfEvent["wDestPort"] = json.dumps(destPort)
-            vmfEvent["vDestPort"] = json.dumps(vpMap[destPort.pname])
-            vmfEvent["pathResult"] = json.dumps(pathResult)
-            vmfEvent["V_pid"] = vpid
-            vmfEvent["StartTime"] = ms2datestr(vStartTime)
-            vmfEvent["State"] = "success"
-            vmfEvent["Reason"] = reason
+            setCache(wpid, "DestPort", 'WPort', destPort.__dict__)
+            setCache(wpid, "W_TargPortList", 'ArrayList', [v.__dict__ for v in candinateWports])
+            event["W_Info"] = w_info
+            event["wDestPort"] = destPort.__dict__
+            event["vDestPort"] = vpMap[destPort.pname].__dict__
+            event["pathResult"] = pathResult
+            event["V_pid"] = vpid
+            event["StartTime"] = ms2datestr(vStartTime)
+            event["State"] = "success"
+            event["Reason"] = reason
         else:
-            vmfEvent["W_Info"] = json.dumps(w_info)
+            event["W_Info"] = w_info
             setVariable(vpid, "dpName", 'string', "")
-            vmfEvent["State"] = "fail"
-        sendEvent(json.dumps(vmfEvent))
-        print("看起来跑完了这里")
+            event["State"] = "fail"
+        sendVWCEvent(json.dumps(event))
+
+        print("看起来VWC没啥毛病")
 
     if msgType == "msg_CreateVWConn":
         print("Vessel 和 Weagon 联系建立")
@@ -169,6 +169,6 @@ def planPath(x1, y1, x2, y2):
     print(map_url)
 
     ret = requests.get(map_url, headers=HEADERS).json()
-    print(ret)
+    # print(ret)
 
     return ret.get("route", None)
