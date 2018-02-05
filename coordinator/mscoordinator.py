@@ -69,5 +69,5 @@ def MSCoordinator(msg):
         msg["W_TargLocList"] = [i.__dict__ for i in wtarglocs]
         msg.pop("msgType", None)
 
-        sendMessageToStartProcessInstance("Msg_StartSupplier", json.dumps(msg))
+        sendMessageToStartProcessInstance(msgType, json.dumps(msg))
         print("Supplier流程实例已启动")
