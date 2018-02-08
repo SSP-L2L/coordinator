@@ -6,6 +6,18 @@ As we all know, aws lambda can receive different requests from aws api gateway, 
 
 In this project, we just take the default behaviour and use python as develop languages. Flask is a very light web framework in python and it can simply simulate lambda behaviour in several lines of code.
  
+ ## deploy our python code on lambda
+ 
+ > ref: [https://docs.aws.amazon.com/lambda/latest/dg/lambda-python-how-to-create-deployment-package.html](https://docs.aws.amazon.com/lambda/latest/dg/lambda-python-how-to-create-deployment-package.html)
+ 
+Before uploading code to lambda, we need to install the libraries we used in our code  directly in the working directory.
+
+For example, we use `requests` package in this coordinator project. 
+```bash
+pip install requests -t .
+```
+ Note that `server.py` is only used in local simulation and it won't and shouldn't run in lambda. So we don't need to `pip install` `flask` inside the directory.
+ 
  ## repo organize
  lambda_function.py is as same as the one in aws lambda function. In this part, we use the lambda_function as the dispatcher of four coordinator function.
  ```text
@@ -57,9 +69,9 @@ if __name__ == '__main__':
     app.run(host='localhost', port=5000, threaded=True, debug=True)
 ```
 
-## pre-install and run
+## pre-install and run locally
 ```bash
-sudo pip install flask
+sudo pip install flask requests
 python server.py
 ```
 
