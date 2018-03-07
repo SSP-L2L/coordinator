@@ -2,7 +2,7 @@
 
 This repo contains code that simulates aws lambda locally.
 
-As we all know, aws lambda can receive different requests from aws api gateway, for example, "GET" and "POST". Aws lambda accept "application/json" and response also in "application/json" by default. It can be coded in different languages, such as Python, Java, and Javascript.
+As we all know, aws lambda can receive different requests from aws api gateway, for example, "`GET`" and "`POST`". Aws lambda accept "`application/json`" and response also in "`application/json`" by default. It can be coded in different languages, such as Python, Java, and Javascript.
 
 In this project, we just take the default behaviour and use python as develop languages. Flask is a very light web framework in python and it can simply simulate lambda behaviour in several lines of code.
  
@@ -76,10 +76,11 @@ python server.py
 ```
 
 ##  Dependencies
--   [`The Simulator of vessel and wagon`](https://github.com/sonnyhcl/Frontend/tree/lambda)
+-   [`The Simulator of vessel and wagon`](https://github.com/SSP-L2L/Frontend/tree/lambda)
 
     > Attention: In order to perform as demo shows, The Activiti Backend project must be coordinated with the Vessel Frontend project.
 
--   [`SPS Backend`](https://github.com/sonnyhcl/backend/tree/lambda)
+-   [`SPS Backend`](
+https://github.com/SSP-L2L/backend/tree/lambda)
 
     The backend of Spare Parts Supply-chain management implemented mainly based on `activiti` - the BPMN engine backend project
