@@ -84,3 +84,7 @@ python server.py
 https://github.com/SSP-L2L/backend/tree/lambda)
 
     The backend of Spare Parts Supply-chain management implemented mainly based on `activiti` - the BPMN engine backend project
+    
+## Video URL
+-   [`SSP-L2L`](https://www.dropbox.com/s/2r6iiy8cf0bjsjf/SSP-L2L.mpg?dl=0)
+    > This is an eight-minute video that shows the operation and effect of the system.
